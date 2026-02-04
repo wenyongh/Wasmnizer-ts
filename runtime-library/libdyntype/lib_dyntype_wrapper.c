@@ -528,7 +528,8 @@ dyntype_set_prototype_wrapper(wasm_exec_env_t exec_env, wasm_anyref_obj_t ctx,
                                  UNBOX_ANYREF(proto_obj));
 }
 
-const wasm_anyref_obj_t
+//const wasm_anyref_obj_t
+wasm_anyref_obj_t
 dyntype_get_prototype_wrapper(wasm_exec_env_t exec_env, wasm_anyref_obj_t ctx,
                               wasm_anyref_obj_t obj)
 {
@@ -655,7 +656,7 @@ dyntype_invoke_wrapper(wasm_exec_env_t exec_env, wasm_anyref_obj_t ctx,
                        wasm_anyref_obj_t args_array)
 {
     int i = 0;
-    uint32_t argc = 0;
+    int argc = 0;
     dyn_value_t dyn_ctx = UNBOX_ANYREF(ctx);
     dyn_value_t dyn_obj = UNBOX_ANYREF(obj);
     dyn_value_t dyn_args = UNBOX_ANYREF(args_array);

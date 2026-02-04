@@ -355,7 +355,7 @@ call_wasm_func_with_boxing(wasm_exec_env_t exec_env, dyn_ctx_t ctx,
                            wasm_anyref_obj_t func_any_obj, uint32_t argc,
                            dyn_value_t *func_args)
 {
-    int i;
+    uint32_t i;
     dyn_value_t ret = NULL;
     wasm_func_obj_t func_ref = { 0 };
     wasm_func_type_t func_type = { 0 };

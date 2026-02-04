@@ -356,7 +356,7 @@ create_wasm_array_with_string(wasm_exec_env_t exec_env, void **ptr,
     local_ref.val = (wasm_obj_t)new_arr;
 
     /* create_wasm_string for every element */
-    for (int i = 0; i < arrlen; i++) {
+    for (int i = 0; (uint32_t)i < arrlen; i++) {
         const char *p = (const char *)((void **)ptr)[i];
         void *string_struct = create_wasm_string(exec_env, p);
         val.gc_obj = (wasm_obj_t)string_struct;
@@ -465,7 +465,7 @@ create_wasm_array_with_string(wasm_exec_env_t exec_env, void **ptr,
         uint32_t len;                                                         \
         wasm_array_obj_t arr_ref = get_array_ref(obj);                        \
         len = get_array_length(obj);                                          \
-        if (idx >= 0 && idx < len) {                                          \
+        if (/*idx >= 0 &&*/ idx < len) {                                      \
             wasm_value_t value = { 0 };                                       \
             wasm_array_obj_get_elem(arr_ref, idx, false, &value);             \
             *val = value.wasm_field;                                          \
@@ -780,7 +780,7 @@ create_wasm_array_with_type(wasm_exec_env_t exec_env,
                                                    value_type, true, arrlen);
 
     /* traverse each element and assign values ​​to array elements */
-    for (int i = 0; i < arrlen; i++) {
+    for (int i = 0; (uint32_t)i < arrlen; i++) {
         if (value_type == VALUE_TYPE_I32) {
             int32_t ele_val = ((bool *)ptr)[i];
             val.i32 = ele_val;
@@ -1140,7 +1140,7 @@ get_prop_index_of_struct(wasm_exec_env_t exec_env, const char *prop,
     argv[2] = ALL;
 
     wasm_runtime_call_wasm(exec_env, func, argc, argv);
-    if (argv[0] != -1) {
+    if (argv[0] != (uint32_t)-1) {
         property_flag = argv[0] & META_FLAG_MASK;
         property_index = (argv[0] & META_INDEX_MASK) >> 4;
         if (property_flag == METHOD) {
@@ -1311,7 +1311,7 @@ const char *
 get_field_name_from_meta_index(wasm_exec_env_t exec_env, void *meta,
                                enum field_flag flag, uint32_t index)
 {
-    int32 count;
+    uint32_t count;
     void *meta_field;
     enum field_flag meta_field_flag;
     int32 meta_field_name_offset;
@@ -1319,7 +1319,7 @@ get_field_name_from_meta_index(wasm_exec_env_t exec_env, void *meta,
 
     count = get_meta_fields_count(meta);
 
-    if (index >= 0 && index < count) {
+    if (/*index >= 0 &&*/ index < count) {
         meta_field = get_meta_field_by_index(meta, index);
         meta_field_flag = get_meta_field_flag(meta_field);
         meta_field_name_offset = get_meta_field_name(meta_field);

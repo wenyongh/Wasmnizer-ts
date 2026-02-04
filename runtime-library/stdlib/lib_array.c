@@ -257,7 +257,7 @@ void *
 array_slice_generic(wasm_exec_env_t exec_env, void *ctx, void *obj,
                     void *start_obj, void *end_obj)
 {
-    uint32_t i;
+    int32 i;
     int32 len, new_len, start, end;
     wasm_struct_obj_t new_arr_struct = NULL;
     wasm_array_obj_t new_arr, arr_ref = get_array_ref(obj);
@@ -467,14 +467,14 @@ array_splice_generic(wasm_exec_env_t exec_env, void *ctx, void *obj,
 
     /* Ensure that start_idx keeps between 0~len*/
     if (start_idx < 0) {
-        if (-start_idx > len) {
+        if ((uint32_t)-start_idx > len) {
             start_idx = 0;
         }
         else {
             start_idx += len;
         }
     }
-    else if (start_idx >= len) {
+    else if ((uint32_t)start_idx >= len) {
         start_idx = len;
     }
 
@@ -492,7 +492,7 @@ array_splice_generic(wasm_exec_env_t exec_env, void *ctx, void *obj,
 
     delete_count = delete_count < 0 ? 0 : delete_count;
     delete_count =
-        start_idx + delete_count > len ? len - start_idx : delete_count;
+        (uint32_t)(start_idx + delete_count) > len ? len - start_idx : (uint32_t)delete_count;
     delete_arr =
         wasm_array_obj_new_with_type(exec_env, arr_type, delete_count, &init);
 
@@ -654,9 +654,9 @@ array_unshift_generic(wasm_exec_env_t exec_env, void *ctx, void *obj,
         else {                                                            \
             idx = idx < 0 ? (idx + len) : idx;                            \
         }                                                                 \
-        for (i = idx; i < len; i++) {                                     \
+        for (i = idx; i < (uint32_t)len; i++) {                           \
             wasm_array_obj_get_elem(arr_ref, i, false, &tmp_val);         \
-            if (tmp_val.wasm_field == element) {                          \
+            if ((uint64_t)tmp_val.wasm_field == element) {                \
                 return i;                                                 \
             }                                                             \
         }                                                                 \
@@ -705,7 +705,7 @@ array_indexOf_anyref(wasm_exec_env_t exec_env, void *ctx, void *obj,
     }
 
     /* loop through the array */
-    for (i = idx; i < len; i++) {
+    for (i = idx; i < (uint32_t)len; i++) {
         wasm_defined_type_t value_defined_type;
 
         wasm_array_obj_get_elem(arr_ref, i, 0, &tmp_val);
@@ -795,7 +795,7 @@ array_indexOf_anyref(wasm_exec_env_t exec_env, void *ctx, void *obj,
         }                                                                     \
         for (i = idx; i >= 0; i--) {                                          \
             wasm_array_obj_get_elem(arr_ref, i, false, &tmp_val);             \
-            if (tmp_val.wasm_field == element) {                              \
+            if ((uint64_t)tmp_val.wasm_field == element) {                    \
                 return i;                                                     \
             }                                                                 \
         }                                                                     \
@@ -1452,7 +1452,7 @@ array_findIndex_generic(wasm_exec_env_t exec_env, void *ctx, void *obj,
         dyntype_to_number(dyn_ctx, end_idx, &f_end);                           \
         end = (int32)f_end;                                                    \
         iter = iter < 0 ? 0 : iter;                                            \
-        end = end > len ? len : end;                                           \
+        end = (uint32_t)end > len ? len : (uint32_t)end;                       \
         for (; iter != end; iter++) {                                          \
             wasm_array_obj_set_elem(arr_ref, iter, &value);                    \
         }                                                                      \
@@ -1528,8 +1528,8 @@ array_copyWithin_generic(wasm_exec_env_t exec_env, void *ctx, void *obj,
     if (copy_count <= 0) {
         return obj;
     }
-    copy_count = start_idx + copy_count > len ? len - start_idx : copy_count;
-    copy_count = target_idx + copy_count > len ? len - target_idx : copy_count;
+    copy_count = (uint32_t)(start_idx + copy_count) > len ? len - start_idx : (uint32_t)copy_count;
+    copy_count = (uint32_t)(target_idx + copy_count) > len ? len - target_idx : (uint32_t)copy_count;
 
     /* Copy elements */
     wasm_array_obj_copy(arr_ref, target_idx, arr_ref, start_idx, copy_count);
@@ -1561,14 +1561,14 @@ array_copyWithin_generic(wasm_exec_env_t exec_env, void *ctx, void *obj,
         }                                                                      \
                                                                                \
         if (from_idx < 0) {                                                    \
-            from_idx = -from_idx > len ? 0 : from_idx + len;                   \
+            from_idx = (uint32_t)-from_idx > len ? 0 : from_idx + len;         \
         }                                                                      \
                                                                                \
-        if (len == 0 || from_idx >= len) {                                     \
+        if (len == 0 || (uint32_t)from_idx >= len) {                           \
             return false;                                                      \
         }                                                                      \
                                                                                \
-        for (int i = from_idx; i < len; ++i) {                                 \
+        for (int i = from_idx; (uint32_t)i < len; ++i) {                       \
             wasm_array_obj_get_elem(arr_ref, i, false, &value);                \
             element_value = value.wasm_field;                                  \
             /* If the element type is string, use strcmp to judge if the array \
@@ -1638,10 +1638,10 @@ array_includes_anyref(wasm_exec_env_t exec_env, void *ctx, void *obj,
         from_idx = 0;
     }
     if (from_idx < 0) {
-        from_idx = -from_idx > len ? 0 : from_idx + len;
+        from_idx = (uint32_t)-from_idx > len ? 0 : from_idx + len;
     }
 
-    if (len == 0 || from_idx >= len) {
+    if (len == 0 || (uint32_t)from_idx >= len) {
         return false;
     }
 
@@ -1653,7 +1653,7 @@ array_includes_anyref(wasm_exec_env_t exec_env, void *ctx, void *obj,
         is_ts_string_type(module, wasm_obj_get_defined_type(value.gc_obj));
 #endif
 
-    for (int i = from_idx; i < len; ++i) {
+    for (int i = from_idx; (uint32_t)i < len; ++i) {
         wasm_array_obj_get_elem(arr_ref, i, 0, &value);
         if (elem_is_string && includes_string(value, search_elem)) {
             return true;

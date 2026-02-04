@@ -22,7 +22,7 @@ check_struct_obj_type(wasm_exec_env_t exec_env, wasm_obj_t obj, int index,
     }
 
     struct_type = (wasm_struct_type_t)wasm_obj_get_defined_type(obj);
-    if (index < 0 || index >= wasm_struct_type_get_field_count(struct_type)) {
+    if (index < 0 || (uint32_t)index >= wasm_struct_type_get_field_count(struct_type)) {
         wasm_runtime_set_exception(module_inst,
                                    "struct field index out of bounds");
         return NULL;
