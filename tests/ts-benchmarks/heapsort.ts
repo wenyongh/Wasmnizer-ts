@@ -5,7 +5,7 @@ const IA = 3877;
 const IC = 29573;
 
 let last = 42;
-const buf: number[] = new Array<number>(LENGTH + 2).fill(0);
+const buf: number[] = new Array<number>(LENGTH + 1).fill(0);
 
 function gen_random(max: number): number {
     last = (last * IA + IC) % IM;

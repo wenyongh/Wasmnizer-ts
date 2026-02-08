@@ -35,7 +35,7 @@ function computeTreeChecksum(rootNode: TreeNode | null): number {
     return 1;
 }
 
-function main(): void {
+export function main(): void {
     const minimumTreeDepth = 4;
     const maximumTreeDepth = 18;
 

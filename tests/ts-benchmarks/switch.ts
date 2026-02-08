@@ -1516,6 +1516,7 @@ function switch_body(): void {
                 case 500:
                     x[i] ^= 2227;
                     break;
+                /*
                 case 501:
                     x[i] ^= 487;
                     break;
@@ -12301,13 +12302,14 @@ function switch_body(): void {
                 case 4095:
                     x[i] ^= 3392;
                     break;
+                */
             }
         }
     }
 
     let str = '';
     let i = 0;
-    for (i = 0; i < 20; i++) {
+    for (i = 0; i < 1; i++) {
         str = str + x[i];
         if (i < 19) str = str + ' ';
     }
